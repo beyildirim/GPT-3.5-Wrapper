@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>GPT-3.5 Turbo Chat</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        .chat-container {
+            max-width: 800px;
+            margin: auto;
+            margin-top: 50px;
+        }
+        .chat-history {
+            overflow-y: scroll;
+            max-height: 400px;
+        }
+        .message {
+            margin-bottom: 20px;
+        }
+        .message .text {
+            padding: 10px;
+            border-radius: 5px;
+        }
+        .message .query {
+            background-color: #e6f2ff;
+        }
+        .message .response {
+            background-color: #f0f0f0;
+        }
+        .message .timestamp {
+            font-size: 12px;
+            color: #666;
+            margin-left: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="chat-container">
+        <h1 class="text-center mb-4">GPT-3.5 Turbo Chat</h1>
+        <div class="chat-history">
+            {% for message in messages %}
+            <div class="message">
+                <div class="text {{ message.type }}">
+                    {{ message.text }}
+                    <span class="timestamp">{{ message.timestamp }}</span>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        <form id="query-form">
+            <div class="form-group">
+                <label for="query">Enter your query:</label>
+                <input type="text" id="query" name="query" class="form-control">
+            </div>
+            <button type="submit" class="btn btn-primary">Send</button>
+        </form>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        $(function() {
+            $('#query-form').submit(function(event) {
+                // Prevent the form from submitting normally
+                event.preventDefault();
+
+                // Get the query from the form
+                var query = $('#query').val();
+
+                // Send the query to the server using AJAX
+                $.ajax({
+                    type: 'POST',
+                    url: '/submit',
+                    data: {
+                        'query': query
+                    },
+                    success: function(data) {
+                        // Update the chat history with the new message
+                        $('.chat-history').append(data);
+
+                        // Clear the query input field
+                        $('#query').val('');
+
+                        // Scroll to the bottom of the chat history
+                        $('.chat-history').scrollTop($('.chat-history')[0].scrollHeight);
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
