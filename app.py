@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, session
 from datetime import datetime
 import openai
+import bleach
 
 app = Flask(__name__)
 
@@ -38,8 +39,8 @@ def submit():
     chat_history.append(('assistant', generated_text))
 
     timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-    query_message = f'<div class="message"><div class="text query">{query}<span class="timestamp">{timestamp}</span></div></div>'
-    response_message = f'<div class="message"><div class="text response">{generated_text}<span class="timestamp">{timestamp}</span></div></div>'
+    query_message = f'<div class="message"><div class="text query">{bleach.clean(query)}<span class="timestamp">{timestamp}</span></div></div>'
+    response_message = f'<div class="message"><div class="text response">{bleach.clean(generated_text)}<span class="timestamp">{timestamp}</span></div></div>'
 
     return query_message + response_message
 
